@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 public class AccountPage extends BasePage {
 
     private By accountCreatedMessage =
-            By.xpath("//*[contains(text(),'ACCOUNT CREATED!')]");
+            By.xpath("//h2[@data-qa='account-created']");
 
     private By loggedInUser =
             By.xpath("//a[contains(text(),'Logged in as')]");

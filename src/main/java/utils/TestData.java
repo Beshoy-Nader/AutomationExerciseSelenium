@@ -13,7 +13,7 @@ public class TestData {
     public static final String COMPANY = "Test Company";
     public static final String ADDRESS = "123 Test Street";
     public static final String ADDRESS_2 = "Apartment 10";
-    public static final String COUNTRY = "India";
+    public static final String COUNTRY = "Canada";
     public static final String STATE = "Cairo";
     public static final String CITY = "Cairo";
     public static final String ZIPCODE = "12345";

@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 public class HomePage extends BasePage {
 
     private By signupLoginButton =
-            By.xpath("//a[contains(text(),'Signup / Login')]");
+            By.xpath("//a[@href='/login']");
 
     private By productsButton =
             By.xpath("//a[contains(text(),'Products')]");

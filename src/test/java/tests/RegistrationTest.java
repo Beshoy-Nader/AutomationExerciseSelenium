@@ -46,8 +46,6 @@ public class RegistrationTest extends BaseTest {
 
         // 7. Fill account information
         signupPage.fillAccountInformation(
-                TestData.NAME,
-                email,
                 TestData.PASSWORD,
                 "10",
                 "5",

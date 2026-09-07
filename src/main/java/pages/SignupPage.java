@@ -126,16 +126,12 @@ public class SignupPage extends BasePage {
     }
 
     public void fillAccountInformation(
-            String name,
-            String email,
             String password,
             String day,
             String month,
             String year
     ) {
         selectTitleMr();
-        enterName(name);
-        enterEmail(email);
         enterPassword(password);
         selectDateOfBirth(day, month, year);
     }
