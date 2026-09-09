@@ -15,6 +15,9 @@ public class ProductDetailsPage extends BasePage {
     private By addToCartButton =
             By.xpath("//button[contains(text(),'Add to cart')]");
 
+    private By addToCartButtonProductDetails =
+            By.xpath("//button[normalize-space()='Add to cart']");
+
     private By viewCartButton =
             By.xpath("//u[contains(text(),'View Cart')]");
 
@@ -33,6 +36,10 @@ public class ProductDetailsPage extends BasePage {
 
     public void addToCart() {
         click(addToCartButton);
+    }
+
+    public void addToCartProductDetailsPage() {
+        click(addToCartButtonProductDetails);
     }
 
     public CartPage addProductToCartWithQuantity(int quantity) {

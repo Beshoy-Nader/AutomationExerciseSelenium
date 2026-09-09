@@ -6,8 +6,7 @@ public class TestData {
 
     // Registration data
     public static final String NAME = "Beshoy Nader";
-    public static final String PASSWORD = "Test@12345";
-
+    public static final String PASSWORD = "P@ssw0rd";
     public static final String FIRST_NAME = "Beshoy";
     public static final String LAST_NAME = "Nader";
     public static final String COMPANY = "Test Company";
@@ -19,7 +18,7 @@ public class TestData {
     public static final String ZIPCODE = "12345";
     public static final String MOBILE = "01012345678";
     public static final String EXISTING_EMAIL = "your-existing-account@email.com";
-    public static final String VALID_EMAIL = "your-existing-account@email.com";
+    public static final String VALID_EMAIL = "your-existing-account2@email.com";
 
     // Generate a unique email for every registration execution
     public static String generateUniqueEmail() {
@@ -30,7 +29,7 @@ public class TestData {
     }
 
     // Product
-    public static final String PRODUCT_NAME = "Blue Top";
+    public static final String PRODUCT_NAME = "Blue";
 
     // Payment
     public static final String CARD_NAME = "Beshoy Nader";

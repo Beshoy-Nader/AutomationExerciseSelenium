@@ -3,6 +3,10 @@ package pages;
 import base.BasePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.util.List;
 
 import java.math.BigDecimal;
 
@@ -27,16 +31,16 @@ public class CartPage extends BasePage {
 
     // Second product
     private By secondProductName =
-            By.cssSelector("#product-2 .cart_description h4 a");
+            By.cssSelector("#product-16 .cart_description h4 a");
 
     private By secondProductPrice =
-            By.cssSelector("#product-2 .cart_price p");
+            By.cssSelector("#product-16 .cart_price p");
 
     private By secondProductQuantity =
-            By.cssSelector("#product-2 .cart_quantity button");
+            By.cssSelector("#product-16 .cart_quantity button");
 
     private By secondProductTotal =
-            By.cssSelector("#product-2 .cart_total_price");
+            By.cssSelector("#product-16 .cart_total_price");
 
     // Proceed to checkout
     private By proceedToCheckoutButton =
@@ -44,6 +48,9 @@ public class CartPage extends BasePage {
 
     private By viewCartButton =
             By.xpath("//u[contains(text(),'View Cart')]");
+
+    private final By removeProductButtons =
+            By.cssSelector("a.cart_quantity_delete");
 
     public CartPage(WebDriver driver) {
         super(driver);
@@ -104,6 +111,22 @@ public class CartPage extends BasePage {
         click(proceedToCheckoutButton);
 
         return new CheckoutPage(driver);
+    }
+
+    public void removeAllProductsFromCart() {
+        while (true) {
+
+            List<WebElement> removeButtons =
+                    driver.findElements(removeProductButtons);
+
+            if (removeButtons.isEmpty()) {
+                break;
+            }
+
+            removeButtons.getFirst().click();
+
+            wait.until(ExpectedConditions.stalenessOf(removeButtons.getFirst()));
+        }
     }
 
     private BigDecimal getPrice(By locator) {

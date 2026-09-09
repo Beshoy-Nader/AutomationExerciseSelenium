@@ -12,6 +12,13 @@ public class HomePage extends BasePage {
     private By productsButton =
             By.xpath("//a[contains(text(),'Products')]");
 
+    private final By cartLink = By.cssSelector("a[href='/view_cart']");
+
+    public CartPage clickCart() {
+        click(cartLink);
+        return new CartPage(driver);
+    }
+
     public HomePage(WebDriver driver) {
         super(driver);
     }

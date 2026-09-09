@@ -35,7 +35,7 @@ public class LoginPage extends BasePage {
             By.xpath("//*[contains(text(),'Your email or password is incorrect!')]");
 
     private By existingEmailError =
-            By.xpath("//*[contains(text(),'Email Address already exist!')]");
+            By.xpath("//p[normalize-space()='Email Address already exist!']");
 
     public LoginPage(WebDriver driver) {
         super(driver);

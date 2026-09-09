@@ -3,10 +3,7 @@ package tests;
 import base.BaseTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import pages.CartPage;
-import pages.HomePage;
-import pages.ProductDetailsPage;
-import pages.ProductsPage;
+import pages.*;
 import utils.TestData;
 
 import java.math.BigDecimal;
@@ -23,6 +20,32 @@ public class ProductTest extends BaseTest {
                 homePage.isHomePageDisplayed(),
                 "Home page is not displayed"
         );
+
+        LoginPage loginPage = homePage.clickSignupLogin();
+
+        // 2. Verify "Login to your account"
+        Assert.assertTrue(
+                loginPage.isLoginAccountDisplayed(),
+                "Login to your account section is not displayed"
+        );
+
+        // 3 + 4. Enter valid credentials and click Login
+        AccountPage accountPage =
+                loginPage.login(
+                        TestData.VALID_EMAIL,
+                        TestData.PASSWORD
+                );
+
+        // 5. Verify logged in successfully
+        Assert.assertTrue(
+                accountPage.isLoggedIn(TestData.NAME),
+                "User is not logged in successfully"
+        );
+
+
+        // Clean existing cart state
+        CartPage cartPage = homePage.clickCart();
+        cartPage.removeAllProductsFromCart();
 
         // 2. Navigate to Products
         ProductsPage productsPage = homePage.clickProducts();
@@ -68,10 +91,10 @@ public class ProductTest extends BaseTest {
         productDetailsPage.setQuantity(4);
 
         // 12. Add second product to cart
-        productDetailsPage.addToCart();
+        productDetailsPage.addToCartProductDetailsPage();
 
         // 13. View Cart
-        CartPage cartPage = productDetailsPage.clickViewCart();
+        cartPage = productDetailsPage.clickViewCart();
 
         // 14. Verify products are in cart
         Assert.assertTrue(
