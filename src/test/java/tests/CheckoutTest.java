@@ -11,6 +11,7 @@ import utils.FileUtils;
 import utils.TestData;
 
 import java.io.File;
+import java.math.BigDecimal;
 
 public class CheckoutTest extends BaseTest {
 
@@ -25,67 +26,121 @@ public class CheckoutTest extends BaseTest {
                 "Home page is not displayed"
         );
 
-        // 2. Go to Products
+        LoginPage loginPage = homePage.clickSignupLogin();
+
+        // 2. Verify "Login to your account"
+        Assert.assertTrue(
+                loginPage.isLoginAccountDisplayed(),
+                "Login to your account section is not displayed"
+        );
+
+        // 3 + 4. Enter valid credentials and click Login
+        AccountPage accountPage =
+                loginPage.login(
+                        TestData.VALID_EMAIL,
+                        TestData.PASSWORD
+                );
+
+        // 5. Verify logged in successfully
+        Assert.assertTrue(
+                accountPage.isLoggedIn(TestData.NAME),
+                "User is not logged in successfully"
+        );
+
+
+        // Clean existing cart state
+        CartPage cartPage = homePage.clickCart();
+        cartPage.removeAllProductsFromCart();
+
+        // 2. Navigate to Products
         ProductsPage productsPage = homePage.clickProducts();
 
+        // 3. Verify ALL PRODUCTS page
         Assert.assertTrue(
                 productsPage.isAllProductsDisplayed(),
                 "ALL PRODUCTS page is not displayed"
         );
 
-        // 3. Search product
+        // 4. Search for product
         productsPage.searchProduct(TestData.PRODUCT_NAME);
 
+        // 5. Verify SEARCHED PRODUCTS
         Assert.assertTrue(
                 productsPage.isSearchedProductsDisplayed(),
                 "SEARCHED PRODUCTS is not displayed"
         );
 
-        // 4. Add first product
+        // 6. Verify search results
+        Assert.assertTrue(
+                productsPage.areSearchResultsDisplayed(),
+                "Products related to the search are not displayed"
+        );
+
+        // 7. Add first product to cart
         productsPage.addFirstProductToCart();
 
-        // 5. Continue Shopping
+        // 8. Continue shopping
         productsPage.clickContinueShopping();
 
-        // 6. Open second product
+        // 9. Open second product
         ProductDetailsPage productDetailsPage =
                 productsPage.openSecondProduct();
 
-        // 7. Verify details
+        // 10. Verify product details
         Assert.assertTrue(
                 productDetailsPage.isProductDetailsDisplayed(),
-                "Product details are not displayed"
+                "Product details page is not displayed"
         );
 
-        // 8. Set quantity to 4
+        // 11. Increase quantity to 4
         productDetailsPage.setQuantity(4);
 
-        // 9. Add second product
-        CartPage cartPage =
-                productDetailsPage.addProductToCartWithQuantity(4);
+        // 12. Add second product to cart
+        productDetailsPage.addToCartProductDetailsPage();
 
-        // 10. View Cart
-        cartPage.clickViewCart();
+        // 13. View Cart
+        cartPage = productDetailsPage.clickViewCart();
 
-        // 11. Verify products
+        // 14. Verify products are in cart
         Assert.assertTrue(
                 cartPage.areProductsDisplayed(),
-                "Products are not displayed in cart"
+                "Products are not displayed in the cart"
         );
 
-        // 12. Verify second product quantity
+        // 15. Verify first product quantity
+        Assert.assertEquals(
+                cartPage.getFirstProductQuantity(),
+                1,
+                "First product quantity is incorrect"
+        );
+
+        // 16. Verify second product quantity
         Assert.assertEquals(
                 cartPage.getSecondProductQuantity(),
                 4,
                 "Second product quantity should be 4"
         );
 
-        // 13. Verify second product total
-        Assert.assertTrue(
-                cartPage.isSecondProductTotalCorrect(),
-                "Second product total is incorrect"
+        // 17. Verify first product total
+        BigDecimal firstExpectedTotal =
+                cartPage.getFirstProductPrice()
+                        .multiply(
+                                BigDecimal.valueOf(
+                                        cartPage.getFirstProductQuantity()
+                                )
+                        );
+
+        Assert.assertEquals(
+                cartPage.getFirstProductTotal(),
+                firstExpectedTotal,
+                "First product total is incorrect"
         );
 
+        // 18. Verify second product total
+        Assert.assertTrue(
+                cartPage.isSecondProductTotalCorrect(),
+                "Second product total is not correctly calculated"
+        );
         // 14. Proceed to checkout
         CheckoutPage checkoutPage =
                 cartPage.proceedToCheckout();
@@ -158,7 +213,7 @@ public class CheckoutTest extends BaseTest {
             value = "{name}",
             type = "image/png"
     )
-    public byte[] attachScreenshot(String name) {
+    public byte[] attachScreenshot(String   name) {
 
         return ((TakesScreenshot) driver)
                 .getScreenshotAs(OutputType.BYTES);
