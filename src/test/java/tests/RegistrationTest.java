@@ -1,21 +1,31 @@
 package tests;
 
 import base.BaseTest;
+import data.TestData;
+import data.TestDataLoader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.AccountPage;
 import pages.HomePage;
 import pages.LoginPage;
 import pages.SignupPage;
-import utils.TestData;
+import utils.TestDataGenerator;
+import org.testng.annotations.BeforeClass;
 
 public class RegistrationTest extends BaseTest {
+
+    private TestData testData;
+
+    @BeforeClass
+    public void setUpTestData() {
+        testData = TestDataLoader.getTestData();
+    }
 
     @Test
     public void registerNewAccountTest() {
 
         // Generate a unique email for every test execution
-        String email = TestData.generateUniqueEmail();
+        String email = TestDataGenerator.generateUniqueEmail();
 
         // Open Home Page
         HomePage homePage = new HomePage(driver);
@@ -36,7 +46,10 @@ public class RegistrationTest extends BaseTest {
         );
 
         // 4 & 5. Enter name/email and click Signup
-        SignupPage signupPage = loginPage.signup(TestData.NAME, email);
+        SignupPage signupPage = loginPage.signup(
+                testData.getRegistration().getName(),
+                email
+        );
 
         // 6. Verify ENTER ACCOUNT INFORMATION
         Assert.assertTrue(
@@ -46,10 +59,10 @@ public class RegistrationTest extends BaseTest {
 
         // 7. Fill account information
         signupPage.fillAccountInformation(
-                TestData.PASSWORD,
-                "10",
-                "5",
-                "1995"
+                testData.getRegistration().getPassword(),
+                testData.getRegistration().getBirthDay(),
+                testData.getRegistration().getBirthMonth(),
+                testData.getRegistration().getBirthYear()
         );
 
         // 8. Newsletter
@@ -60,20 +73,21 @@ public class RegistrationTest extends BaseTest {
 
         // 10. Fill address information
         signupPage.fillAddressInformation(
-                TestData.FIRST_NAME,
-                TestData.LAST_NAME,
-                TestData.COMPANY,
-                TestData.ADDRESS,
-                TestData.ADDRESS_2,
-                TestData.COUNTRY,
-                TestData.STATE,
-                TestData.CITY,
-                TestData.ZIPCODE,
-                TestData.MOBILE
+                testData.getRegistration().getFirstName(),
+                testData.getRegistration().getLastName(),
+                testData.getRegistration().getCompany(),
+                testData.getRegistration().getAddress(),
+                testData.getRegistration().getAddress2(),
+                testData.getRegistration().getCountry(),
+                testData.getRegistration().getState(),
+                testData.getRegistration().getCity(),
+                testData.getRegistration().getZipcode(),
+                testData.getRegistration().getMobile()
         );
 
         // 11. Create Account
-        AccountPage accountPage = signupPage.clickCreateAccount();
+        AccountPage accountPage =
+                signupPage.clickCreateAccount();
 
         // 12. Verify ACCOUNT CREATED
         Assert.assertTrue(
@@ -86,11 +100,12 @@ public class RegistrationTest extends BaseTest {
 
         // 14. Verify Logged in as username
         Assert.assertTrue(
-                accountPage.isLoggedIn(TestData.NAME),
+                accountPage.isLoggedIn(
+                        testData.getRegistration().getName()
+                ),
                 "Logged in as username is not displayed"
         );
     }
-
 
     @Test
     public void registerUsingExistingEmailTest() {
@@ -114,8 +129,8 @@ public class RegistrationTest extends BaseTest {
 
         // 4 & 5. Enter existing email and click Signup
         loginPage.signup(
-                TestData.NAME,
-                TestData.EXISTING_EMAIL
+                testData.getRegistration().getName(),
+                testData.getRegistration().getExistingEmail()
         );
 
         // 6. Verify duplicate email error

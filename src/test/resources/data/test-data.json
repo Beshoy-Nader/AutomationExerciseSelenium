@@ -1,0 +1,37 @@
+{
+  "registration": {
+    "name": "Beshoy Nader",
+    "password": "P@ssw0rd",
+    "firstName": "Beshoy",
+    "birthDay": "10",
+    "birthMonth": "5",
+    "birthYear": "1995",
+    "invalidEmail": "invalid@email.com",
+    "invalidPassword": "WrongPassword123",
+    "lastName": "Nader",
+    "company": "Test Company",
+    "address": "123 Test Street",
+    "address2": "Apartment 10",
+    "country": "Canada",
+    "state": "Cairo",
+    "city": "Cairo",
+    "zipcode": "12345",
+    "mobile": "01012345678",
+    "existingEmail": "your-existing-account@email.com",
+    "validEmail": "your-existing-account2@email.com"
+  },
+    "product": {
+      "name": "Blue",
+      "secondProductQuantity": 4
+  },
+  "payment": {
+    "cardName": "Beshoy Nader",
+    "cardNumber": "4111111111111111",
+    "cvc": "123",
+    "expirationMonth": "12",
+    "expirationYear": "2030"
+  },
+  "checkout": {
+    "comment": "Please deliver the order as soon as possible."
+  }
+}

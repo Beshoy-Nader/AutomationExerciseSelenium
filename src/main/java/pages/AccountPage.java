@@ -25,7 +25,13 @@ public class AccountPage extends BasePage {
     public boolean isLoggedIn(String username) {
         return getText(loggedInUser).contains(username);
     }
+
     public void clickContinue() {
         click(continueButton);
+
+        wait.until(
+                org.openqa.selenium.support.ui.ExpectedConditions
+                        .visibilityOfElementLocated(loggedInUser)
+        );
     }
 }

@@ -5,6 +5,10 @@
 
 <suite name="Automation Exercise Suite">
 
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
     <test name="Registration Tests">
         <classes>
             <class name="tests.RegistrationTest"/>

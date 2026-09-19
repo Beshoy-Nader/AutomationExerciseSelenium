@@ -1,19 +1,35 @@
 package utils;
 
-import io.qameta.allure.Attachment;
+import io.qameta.allure.Allure;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
-public class ScreenshotUtils {
+import java.io.ByteArrayInputStream;
 
-    @Attachment(
-            value = "Failure Screenshot",
-            type = "image/png"
-    )
-    public static byte[] attachScreenshot(WebDriver driver) {
+public final class ScreenshotUtils {
 
-        return ((TakesScreenshot) driver)
-                .getScreenshotAs(OutputType.BYTES);
+    private ScreenshotUtils() {
+        // Prevent instantiation
+    }
+
+    public static void attachScreenshot(
+            WebDriver driver,
+            String testName) {
+
+        if (driver == null) {
+            return;
+        }
+
+        byte[] screenshot =
+                ((TakesScreenshot) driver)
+                        .getScreenshotAs(OutputType.BYTES);
+
+        Allure.addAttachment(
+                testName + " - Screenshot",
+                "image/png",
+                new ByteArrayInputStream(screenshot),
+                ".png"
+        );
     }
 }

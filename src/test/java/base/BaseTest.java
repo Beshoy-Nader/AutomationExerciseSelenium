@@ -1,8 +1,6 @@
 package base;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -14,12 +12,7 @@ public class BaseTest {
 
     @BeforeMethod
     public void setUp() {
-
-        WebDriverManager.chromedriver().setup();
-
-        driver = new ChromeDriver();
-
-        driver.manage().window().maximize();
+        driver = DriverFactory.createDriver();
 
         driver.get("http://automationexercise.com");
     }
@@ -27,9 +20,10 @@ public class BaseTest {
     @AfterMethod
     public void tearDown(ITestResult result) {
 
-        if (result.getStatus() == ITestResult.FAILURE) {
-            ScreenshotUtils.attachScreenshot(driver);
-        }
+        ScreenshotUtils.attachScreenshot(
+                driver,
+                result.getMethod().getMethodName()
+        );
 
         if (driver != null) {
             driver.quit();

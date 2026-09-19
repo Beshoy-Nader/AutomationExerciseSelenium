@@ -1,14 +1,18 @@
 package tests;
 
 import base.BaseTest;
+import data.TestData;
+import data.TestDataLoader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
-import utils.TestData;
 
 import java.math.BigDecimal;
 
 public class ProductTest extends BaseTest {
+
+    private final TestData testData =
+            TestDataLoader.getTestData();
 
     @Test
     public void searchAndAddProductsToCartTest() {
@@ -32,16 +36,17 @@ public class ProductTest extends BaseTest {
         // 3 + 4. Enter valid credentials and click Login
         AccountPage accountPage =
                 loginPage.login(
-                        TestData.VALID_EMAIL,
-                        TestData.PASSWORD
+                        testData.getRegistration().getValidEmail(),
+                        testData.getRegistration().getPassword()
                 );
 
         // 5. Verify logged in successfully
         Assert.assertTrue(
-                accountPage.isLoggedIn(TestData.NAME),
+                accountPage.isLoggedIn(
+                        testData.getRegistration().getName()
+                ),
                 "User is not logged in successfully"
         );
-
 
         // Clean existing cart state
         CartPage cartPage = homePage.clickCart();
@@ -57,7 +62,9 @@ public class ProductTest extends BaseTest {
         );
 
         // 4. Search for product
-        productsPage.searchProduct(TestData.PRODUCT_NAME);
+        productsPage.searchProduct(
+                testData.getProduct().getName()
+        );
 
         // 5. Verify SEARCHED PRODUCTS
         Assert.assertTrue(
@@ -87,8 +94,10 @@ public class ProductTest extends BaseTest {
                 "Product details page is not displayed"
         );
 
-        // 11. Increase quantity to 4
-        productDetailsPage.setQuantity(4);
+        // 11. Increase quantity
+        productDetailsPage.setQuantity(
+                testData.getProduct().getSecondProductQuantity()
+        );
 
         // 12. Add second product to cart
         productDetailsPage.addToCartProductDetailsPage();
@@ -112,8 +121,8 @@ public class ProductTest extends BaseTest {
         // 16. Verify second product quantity
         Assert.assertEquals(
                 cartPage.getSecondProductQuantity(),
-                4,
-                "Second product quantity should be 4"
+                testData.getProduct().getSecondProductQuantity(),
+                "Second product quantity is incorrect"
         );
 
         // 17. Verify first product total

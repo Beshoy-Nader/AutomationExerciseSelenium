@@ -1,6 +1,8 @@
 package tests;
 
 import base.BaseTest;
+import data.TestData;
+import data.TestDataLoader;
 import io.qameta.allure.Attachment;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -8,12 +10,14 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
 import utils.FileUtils;
-import utils.TestData;
 
 import java.io.File;
 import java.math.BigDecimal;
 
 public class CheckoutTest extends BaseTest {
+
+    private final TestData testData =
+            TestDataLoader.getTestData();
 
     @Test
     public void completeOrderAndDownloadInvoiceTest() {
@@ -37,91 +41,96 @@ public class CheckoutTest extends BaseTest {
         // 3 + 4. Enter valid credentials and click Login
         AccountPage accountPage =
                 loginPage.login(
-                        TestData.VALID_EMAIL,
-                        TestData.PASSWORD
+                        testData.getRegistration().getValidEmail(),
+                        testData.getRegistration().getPassword()
                 );
 
         // 5. Verify logged in successfully
         Assert.assertTrue(
-                accountPage.isLoggedIn(TestData.NAME),
+                accountPage.isLoggedIn(
+                        testData.getRegistration().getName()
+                ),
                 "User is not logged in successfully"
         );
-
 
         // Clean existing cart state
         CartPage cartPage = homePage.clickCart();
         cartPage.removeAllProductsFromCart();
 
-        // 2. Navigate to Products
+        // 6. Navigate to Products
         ProductsPage productsPage = homePage.clickProducts();
 
-        // 3. Verify ALL PRODUCTS page
+        // 7. Verify ALL PRODUCTS page
         Assert.assertTrue(
                 productsPage.isAllProductsDisplayed(),
                 "ALL PRODUCTS page is not displayed"
         );
 
-        // 4. Search for product
-        productsPage.searchProduct(TestData.PRODUCT_NAME);
+        // 8. Search for product
+        productsPage.searchProduct(
+                testData.getProduct().getName()
+        );
 
-        // 5. Verify SEARCHED PRODUCTS
+        // 9. Verify SEARCHED PRODUCTS
         Assert.assertTrue(
                 productsPage.isSearchedProductsDisplayed(),
                 "SEARCHED PRODUCTS is not displayed"
         );
 
-        // 6. Verify search results
+        // 10. Verify search results
         Assert.assertTrue(
                 productsPage.areSearchResultsDisplayed(),
                 "Products related to the search are not displayed"
         );
 
-        // 7. Add first product to cart
+        // 11. Add first product to cart
         productsPage.addFirstProductToCart();
 
-        // 8. Continue shopping
+        // 12. Continue shopping
         productsPage.clickContinueShopping();
 
-        // 9. Open second product
+        // 13. Open second product
         ProductDetailsPage productDetailsPage =
                 productsPage.openSecondProduct();
 
-        // 10. Verify product details
+        // 14. Verify product details
         Assert.assertTrue(
                 productDetailsPage.isProductDetailsDisplayed(),
                 "Product details page is not displayed"
         );
 
-        // 11. Increase quantity to 4
-        productDetailsPage.setQuantity(4);
+        // 15. Increase quantity
+        productDetailsPage.setQuantity(
+                testData.getProduct().getSecondProductQuantity()
+        );
 
-        // 12. Add second product to cart
+        // 16. Add second product to cart
         productDetailsPage.addToCartProductDetailsPage();
 
-        // 13. View Cart
+        // 17. View Cart
         cartPage = productDetailsPage.clickViewCart();
 
-        // 14. Verify products are in cart
+        // 18. Verify products are in cart
         Assert.assertTrue(
                 cartPage.areProductsDisplayed(),
                 "Products are not displayed in the cart"
         );
 
-        // 15. Verify first product quantity
+        // 19. Verify first product quantity
         Assert.assertEquals(
                 cartPage.getFirstProductQuantity(),
                 1,
                 "First product quantity is incorrect"
         );
 
-        // 16. Verify second product quantity
+        // 20. Verify second product quantity
         Assert.assertEquals(
                 cartPage.getSecondProductQuantity(),
-                4,
-                "Second product quantity should be 4"
+                testData.getProduct().getSecondProductQuantity(),
+                "Second product quantity is incorrect"
         );
 
-        // 17. Verify first product total
+        // 21. Verify first product total
         BigDecimal firstExpectedTotal =
                 cartPage.getFirstProductPrice()
                         .multiply(
@@ -136,60 +145,61 @@ public class CheckoutTest extends BaseTest {
                 "First product total is incorrect"
         );
 
-        // 18. Verify second product total
+        // 22. Verify second product total
         Assert.assertTrue(
                 cartPage.isSecondProductTotalCorrect(),
                 "Second product total is not correctly calculated"
         );
-        // 14. Proceed to checkout
+
+        // 23. Proceed to checkout
         CheckoutPage checkoutPage =
                 cartPage.proceedToCheckout();
 
-        // 15. Verify Address Details
+        // 24. Verify Address Details
         Assert.assertTrue(
                 checkoutPage.isAddressDetailsDisplayed(),
                 "Address Details is not displayed"
         );
 
-        // 16. Verify Review Your Order
+        // 25. Verify Review Your Order
         Assert.assertTrue(
                 checkoutPage.isReviewOrderDisplayed(),
                 "Review Your Order is not displayed"
         );
 
-        // 17. Enter comment
+        // 26. Enter comment
         checkoutPage.enterComment(
-                "Please deliver the order as soon as possible."
+                testData.getCheckout().getComment()
         );
 
-        // 18. Place Order
+        // 27. Place Order
         PaymentPage paymentPage =
                 checkoutPage.clickPlaceOrder();
 
-        // 19. Enter payment details
+        // 28. Enter payment details
         paymentPage.enterPaymentDetails(
-                TestData.CARD_NAME,
-                TestData.CARD_NUMBER,
-                TestData.CVC,
-                TestData.EXPIRATION_MONTH,
-                TestData.EXPIRATION_YEAR
+                testData.getPayment().getCardName(),
+                testData.getPayment().getCardNumber(),
+                testData.getPayment().getCvc(),
+                testData.getPayment().getExpirationMonth(),
+                testData.getPayment().getExpirationYear()
         );
 
-        // 20. Pay and Confirm Order
+        // 29. Pay and Confirm Order
         OrderConfirmationPage confirmationPage =
                 paymentPage.payAndConfirmOrder();
 
-        // 21. Verify success message
+        // 30. Verify success message
         Assert.assertTrue(
                 confirmationPage.isOrderPlacedSuccessfully(),
                 "Your order has been placed successfully! message is not displayed"
         );
 
-        // 22. Download invoice
+        // 31. Download invoice
         confirmationPage.downloadInvoice();
 
-        // 23. Verify invoice downloaded
-        File invoice = FileUtils.waitForInvoiceDownload(
+        // 32. Verify invoice downloaded
+        File invoice = FileUtils.waitForFileDownload(
                 "invoice",
                 10
         );
@@ -204,16 +214,15 @@ public class CheckoutTest extends BaseTest {
                 "Downloaded invoice file does not exist"
         );
 
-        // 24. Attach screenshot to Allure
+        // 33. Attach screenshot to Allure
         attachScreenshot("Order Confirmation / Invoice");
     }
-
 
     @Attachment(
             value = "{name}",
             type = "image/png"
     )
-    public byte[] attachScreenshot(String   name) {
+    public byte[] attachScreenshot(String name) {
 
         return ((TakesScreenshot) driver)
                 .getScreenshotAs(OutputType.BYTES);

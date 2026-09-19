@@ -1,14 +1,18 @@
 package tests;
 
 import base.BaseTest;
+import data.TestData;
+import data.TestDataLoader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.AccountPage;
 import pages.HomePage;
 import pages.LoginPage;
-import utils.TestData;
 
 public class LoginTest extends BaseTest {
+
+    private final TestData testData =
+            TestDataLoader.getTestData();
 
     @Test
     public void loginWithInvalidCredentialsTest() {
@@ -26,8 +30,8 @@ public class LoginTest extends BaseTest {
 
         // 3 + 4. Enter invalid credentials and click Login
         loginPage.login(
-                "invalid@email.com",
-                "WrongPassword123"
+                testData.getRegistration().getInvalidEmail(),
+                testData.getRegistration().getInvalidPassword()
         );
 
         // 5. Verify error message
@@ -36,7 +40,6 @@ public class LoginTest extends BaseTest {
                 "Invalid login error message is not displayed"
         );
     }
-
 
     @Test
     public void loginWithValidCredentialsTest() {
@@ -55,13 +58,15 @@ public class LoginTest extends BaseTest {
         // 3 + 4. Enter valid credentials and click Login
         AccountPage accountPage =
                 loginPage.login(
-                        TestData.VALID_EMAIL,
-                        TestData.PASSWORD
+                        testData.getRegistration().getValidEmail(),
+                        testData.getRegistration().getPassword()
                 );
 
         // 5. Verify logged in successfully
         Assert.assertTrue(
-                accountPage.isLoggedIn(TestData.NAME),
+                accountPage.isLoggedIn(
+                        testData.getRegistration().getName()
+                ),
                 "User is not logged in successfully"
         );
     }
