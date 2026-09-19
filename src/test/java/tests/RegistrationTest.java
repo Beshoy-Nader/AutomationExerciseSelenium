@@ -10,16 +10,11 @@ import pages.HomePage;
 import pages.LoginPage;
 import pages.SignupPage;
 import utils.TestDataGenerator;
-import org.testng.annotations.BeforeClass;
 
 public class RegistrationTest extends BaseTest {
 
-    private TestData testData;
-
-    @BeforeClass
-    public void setUpTestData() {
-        testData = TestDataLoader.getTestData();
-    }
+    private final TestData testData =
+            TestDataLoader.getTestData();
 
     @Test
     public void registerNewAccountTest() {
@@ -27,10 +22,9 @@ public class RegistrationTest extends BaseTest {
         // Generate a unique email for every test execution
         String email = TestDataGenerator.generateUniqueEmail();
 
-        // Open Home Page
+        // 1. Open Home Page
         HomePage homePage = new HomePage(driver);
 
-        // 1. Verify Home Page
         Assert.assertTrue(
                 homePage.isHomePageDisplayed(),
                 "Home page is not displayed"
@@ -45,19 +39,19 @@ public class RegistrationTest extends BaseTest {
                 "New User Signup section is not displayed"
         );
 
-        // 4 & 5. Enter name/email and click Signup
+        // 4. Enter name and unique email
         SignupPage signupPage = loginPage.signup(
                 testData.getRegistration().getName(),
                 email
         );
 
-        // 6. Verify ENTER ACCOUNT INFORMATION
+        // 5. Verify ENTER ACCOUNT INFORMATION
         Assert.assertTrue(
                 signupPage.isAccountInformationDisplayed(),
                 "ENTER ACCOUNT INFORMATION is not displayed"
         );
 
-        // 7. Fill account information
+        // 6. Fill account information
         signupPage.fillAccountInformation(
                 testData.getRegistration().getPassword(),
                 testData.getRegistration().getBirthDay(),
@@ -65,13 +59,13 @@ public class RegistrationTest extends BaseTest {
                 testData.getRegistration().getBirthYear()
         );
 
-        // 8. Newsletter
+        // 7. Newsletter
         signupPage.subscribeToNewsletter();
 
-        // 9. Special offers
+        // 8. Special offers
         signupPage.acceptSpecialOffers();
 
-        // 10. Fill address information
+        // 9. Fill address information
         signupPage.fillAddressInformation(
                 testData.getRegistration().getFirstName(),
                 testData.getRegistration().getLastName(),
@@ -85,20 +79,20 @@ public class RegistrationTest extends BaseTest {
                 testData.getRegistration().getMobile()
         );
 
-        // 11. Create Account
+        // 10. Create Account
         AccountPage accountPage =
                 signupPage.clickCreateAccount();
 
-        // 12. Verify ACCOUNT CREATED
+        // 11. Verify ACCOUNT CREATED
         Assert.assertTrue(
                 accountPage.isAccountCreated(),
                 "ACCOUNT CREATED message is not displayed"
         );
 
-        // 13. Click Continue
+        // 12. Click Continue
         accountPage.clickContinue();
 
-        // 14. Verify Logged in as username
+        // 13. Verify Logged in as username
         Assert.assertTrue(
                 accountPage.isLoggedIn(
                         testData.getRegistration().getName()
@@ -127,13 +121,13 @@ public class RegistrationTest extends BaseTest {
                 "New User Signup section is not displayed"
         );
 
-        // 4 & 5. Enter existing email and click Signup
+        // 4. Attempt registration with existing email
         loginPage.signup(
                 testData.getRegistration().getName(),
                 testData.getRegistration().getExistingEmail()
         );
 
-        // 6. Verify duplicate email error
+        // 5. Verify duplicate email error
         Assert.assertTrue(
                 loginPage.isEmailAlreadyExistsDisplayed(),
                 "Email Address already exist! message is not displayed"

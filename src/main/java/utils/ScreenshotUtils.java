@@ -26,7 +26,7 @@ public final class ScreenshotUtils {
                         .getScreenshotAs(OutputType.BYTES);
 
         Allure.addAttachment(
-                testName + " - Screenshot",
+                testName,
                 "image/png",
                 new ByteArrayInputStream(screenshot),
                 ".png"

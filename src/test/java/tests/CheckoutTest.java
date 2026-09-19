@@ -3,13 +3,12 @@ package tests;
 import base.BaseTest;
 import data.TestData;
 import data.TestDataLoader;
-import io.qameta.allure.Attachment;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
 import utils.FileUtils;
+import utils.ScreenshotUtils;
+import utils.TestDataGenerator;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -22,30 +21,93 @@ public class CheckoutTest extends BaseTest {
     @Test
     public void completeOrderAndDownloadInvoiceTest() {
 
+        // ==========================================
+        // 1. Open Home Page
+        // ==========================================
+
         HomePage homePage = new HomePage(driver);
 
-        // 1. Verify home page
         Assert.assertTrue(
                 homePage.isHomePageDisplayed(),
                 "Home page is not displayed"
         );
 
-        LoginPage loginPage = homePage.clickSignupLogin();
+        // ==========================================
+        // 2. Register a new user
+        // ==========================================
 
-        // 2. Verify "Login to your account"
+        LoginPage loginPage =
+                homePage.clickSignupLogin();
+
         Assert.assertTrue(
-                loginPage.isLoginAccountDisplayed(),
-                "Login to your account section is not displayed"
+                loginPage.isNewUserSignupDisplayed(),
+                "New User Signup section is not displayed"
         );
 
-        // 3 + 4. Enter valid credentials and click Login
-        AccountPage accountPage =
-                loginPage.login(
-                        testData.getRegistration().getValidEmail(),
-                        testData.getRegistration().getPassword()
+        String uniqueEmail =
+                TestDataGenerator.generateUniqueEmail();
+
+        SignupPage signupPage =
+                loginPage.signup(
+                        testData.getRegistration().getName(),
+                        uniqueEmail
                 );
 
-        // 5. Verify logged in successfully
+        Assert.assertTrue(
+                signupPage.isAccountInformationDisplayed(),
+                "ENTER ACCOUNT INFORMATION is not displayed"
+        );
+
+        // ==========================================
+        // 3. Fill Account Information
+        // ==========================================
+
+        signupPage.fillAccountInformation(
+                testData.getRegistration().getPassword(),
+                testData.getRegistration().getBirthDay(),
+                testData.getRegistration().getBirthMonth(),
+                testData.getRegistration().getBirthYear()
+        );
+
+        signupPage.subscribeToNewsletter();
+
+        signupPage.acceptSpecialOffers();
+
+        // ==========================================
+        // 4. Fill Address Information
+        // ==========================================
+
+        signupPage.fillAddressInformation(
+                testData.getRegistration().getFirstName(),
+                testData.getRegistration().getLastName(),
+                testData.getRegistration().getCompany(),
+                testData.getRegistration().getAddress(),
+                testData.getRegistration().getAddress2(),
+                testData.getRegistration().getCountry(),
+                testData.getRegistration().getState(),
+                testData.getRegistration().getCity(),
+                testData.getRegistration().getZipcode(),
+                testData.getRegistration().getMobile()
+        );
+
+        // ==========================================
+        // 5. Create Account
+        // ==========================================
+
+        AccountPage accountPage =
+                signupPage.clickCreateAccount();
+
+        Assert.assertTrue(
+                accountPage.isAccountCreated(),
+                "ACCOUNT CREATED message is not displayed"
+        );
+
+        // ==========================================
+        // 6. Continue to logged-in state
+        // ==========================================
+
+        accountPage.clickContinue();
+
         Assert.assertTrue(
                 accountPage.isLoggedIn(
                         testData.getRegistration().getName()
@@ -53,84 +115,107 @@ public class CheckoutTest extends BaseTest {
                 "User is not logged in successfully"
         );
 
-        // Clean existing cart state
-        CartPage cartPage = homePage.clickCart();
+        // ==========================================
+        // 7. Clean Existing Cart
+        // ==========================================
+
+        CartPage cartPage =
+                homePage.clickCart();
+
         cartPage.removeAllProductsFromCart();
 
-        // 6. Navigate to Products
-        ProductsPage productsPage = homePage.clickProducts();
+        // ==========================================
+        // 8. Navigate to Products
+        // ==========================================
 
-        // 7. Verify ALL PRODUCTS page
+        ProductsPage productsPage =
+                homePage.clickProducts();
+
         Assert.assertTrue(
                 productsPage.isAllProductsDisplayed(),
                 "ALL PRODUCTS page is not displayed"
         );
 
-        // 8. Search for product
+        // ==========================================
+        // 9. Search for Product
+        // ==========================================
+
         productsPage.searchProduct(
                 testData.getProduct().getName()
         );
 
-        // 9. Verify SEARCHED PRODUCTS
         Assert.assertTrue(
                 productsPage.isSearchedProductsDisplayed(),
                 "SEARCHED PRODUCTS is not displayed"
         );
 
-        // 10. Verify search results
         Assert.assertTrue(
                 productsPage.areSearchResultsDisplayed(),
                 "Products related to the search are not displayed"
         );
 
-        // 11. Add first product to cart
+        // ==========================================
+        // 10. Add First Product
+        // ==========================================
+
         productsPage.addFirstProductToCart();
 
-        // 12. Continue shopping
         productsPage.clickContinueShopping();
 
-        // 13. Open second product
+        // ==========================================
+        // 11. Add Second Product
+        // ==========================================
+
         ProductDetailsPage productDetailsPage =
                 productsPage.openSecondProduct();
 
-        // 14. Verify product details
         Assert.assertTrue(
                 productDetailsPage.isProductDetailsDisplayed(),
                 "Product details page is not displayed"
         );
 
-        // 15. Increase quantity
         productDetailsPage.setQuantity(
                 testData.getProduct().getSecondProductQuantity()
         );
 
-        // 16. Add second product to cart
         productDetailsPage.addToCartProductDetailsPage();
 
-        // 17. View Cart
-        cartPage = productDetailsPage.clickViewCart();
+        // ==========================================
+        // 12. View Cart
+        // ==========================================
 
-        // 18. Verify products are in cart
+        cartPage =
+                productDetailsPage.clickViewCart();
+
         Assert.assertTrue(
                 cartPage.areProductsDisplayed(),
                 "Products are not displayed in the cart"
         );
 
-        // 19. Verify first product quantity
+        // ==========================================
+        // 13. Verify First Product Quantity
+        // ==========================================
+
         Assert.assertEquals(
                 cartPage.getFirstProductQuantity(),
                 1,
                 "First product quantity is incorrect"
         );
 
-        // 20. Verify second product quantity
+        // ==========================================
+        // 14. Verify Second Product Quantity
+        // ==========================================
+
         Assert.assertEquals(
                 cartPage.getSecondProductQuantity(),
                 testData.getProduct().getSecondProductQuantity(),
                 "Second product quantity is incorrect"
         );
 
-        // 21. Verify first product total
+        // ==========================================
+        // 15. Verify First Product Total
+        // ==========================================
+
         BigDecimal firstExpectedTotal =
                 cartPage.getFirstProductPrice()
                         .multiply(
@@ -145,38 +230,51 @@ public class CheckoutTest extends BaseTest {
                 "First product total is incorrect"
         );
 
-        // 22. Verify second product total
+        // ==========================================
+        // 16. Verify Second Product Total
+        // ==========================================
+
         Assert.assertTrue(
                 cartPage.isSecondProductTotalCorrect(),
                 "Second product total is not correctly calculated"
         );
 
-        // 23. Proceed to checkout
+        // ==========================================
+        // 17. Proceed to Checkout
+        // ==========================================
+
         CheckoutPage checkoutPage =
                 cartPage.proceedToCheckout();
 
-        // 24. Verify Address Details
         Assert.assertTrue(
                 checkoutPage.isAddressDetailsDisplayed(),
                 "Address Details is not displayed"
         );
 
-        // 25. Verify Review Your Order
         Assert.assertTrue(
                 checkoutPage.isReviewOrderDisplayed(),
                 "Review Your Order is not displayed"
         );
 
-        // 26. Enter comment
+        // ==========================================
+        // 18. Enter Order Comment
+        // ==========================================
+
         checkoutPage.enterComment(
                 testData.getCheckout().getComment()
         );
 
-        // 27. Place Order
+        // ==========================================
+        // 19. Place Order
+        // ==========================================
+
         PaymentPage paymentPage =
                 checkoutPage.clickPlaceOrder();
 
-        // 28. Enter payment details
+        // ==========================================
+        // 20. Enter Payment Details
+        // ==========================================
+
         paymentPage.enterPaymentDetails(
                 testData.getPayment().getCardName(),
                 testData.getPayment().getCardNumber(),
@@ -185,24 +283,29 @@ public class CheckoutTest extends BaseTest {
                 testData.getPayment().getExpirationYear()
         );
 
-        // 29. Pay and Confirm Order
+        // ==========================================
+        // 21. Pay and Confirm Order
+        // ==========================================
+
         OrderConfirmationPage confirmationPage =
                 paymentPage.payAndConfirmOrder();
 
-        // 30. Verify success message
         Assert.assertTrue(
                 confirmationPage.isOrderPlacedSuccessfully(),
                 "Your order has been placed successfully! message is not displayed"
         );
 
-        // 31. Download invoice
+        // ==========================================
+// 22. Download Invoice
+// ==========================================
+
         confirmationPage.downloadInvoice();
 
-        // 32. Verify invoice downloaded
-        File invoice = FileUtils.waitForFileDownload(
-                "invoice",
-                10
-        );
+        File invoice =
+                FileUtils.waitForFileDownload(
+                        "invoice",
+                        10
+                );
 
         Assert.assertNotNull(
                 invoice,
@@ -214,17 +317,30 @@ public class CheckoutTest extends BaseTest {
                 "Downloaded invoice file does not exist"
         );
 
-        // 33. Attach screenshot to Allure
-        attachScreenshot("Order Confirmation / Invoice");
-    }
+// ==========================================
+// 23. Open Invoice
+// ==========================================
 
-    @Attachment(
-            value = "{name}",
-            type = "image/png"
-    )
-    public byte[] attachScreenshot(String name) {
+        driver.get(invoice.toURI().toString());
 
-        return ((TakesScreenshot) driver)
-                .getScreenshotAs(OutputType.BYTES);
+// Wait for the PDF to load
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(
+                    "Interrupted while waiting for invoice to load.",
+                    e
+            );
+        }
+
+// ==========================================
+// 24. Attach Invoice Screenshot
+// ==========================================
+
+        ScreenshotUtils.attachScreenshot(
+                driver,
+                "Downloaded Invoice"
+        );
     }
 }
