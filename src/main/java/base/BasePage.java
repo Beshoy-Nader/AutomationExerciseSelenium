@@ -21,8 +21,6 @@ public abstract class BasePage {
     private static final Duration DEFAULT_TIMEOUT =
             Duration.ofSeconds(10);
 
-    private static final Duration AD_CHECK_TIMEOUT =
-            Duration.ofMillis(300);
 
     private final By googleAdFrames =
             By.cssSelector(
